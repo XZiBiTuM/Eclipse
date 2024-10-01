@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <br>
+    <div class="create-article-container">
+        <h2 style="text-align: center; margin-top: 0;" class="page-title">Создание новой статьи</h2>
+        {% if user.is_authenticated %}
+            {% if user.profile.changed is True and user.first_name is not None and user.last_name is not None and user.email is not None and user.profile.birth_date is not None and user.first_name != "" and user.last_name != "" and user.email != "" and user.profile.birth_date != "" %}
+                {% if old %}
+                    <form method="POST" enctype="multipart/form-data" class="create-article-form">
+                        {% csrf_token %}
+
+                        <div class="form-group">
+                            <label for="id_title">Название статьи</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="error-message">
+                                    {{ form.title.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_description">Описание статьи</label>
+                            {{ form.description }}
+                            <div class="chars-counter"><span>Минимальное кол-во символов: 200, максимальное кол-во символов: 255. </span><span id="charCount">0</span><span>/255</span></div>
+                            {% if form.description.errors %}
+                                <div class="error-message">
+                                    {{ form.description.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_content">Контент статьи</label>
+                            {{ form.content }}
+                            {% if form.content.errors %}
+                                <div class="error-message">
+                                    {{ form.content.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_image">Изображение статьи</label>
+                            {{ form.image }}
+                            {% if form.image.errors %}
+                                <div class="error-message">
+                                    {{ form.image.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_tags">Теги статьи</label>
+                            <input type="text" id="id_tags" name="tags" placeholder="Введите теги через запятую" value="{{ form.tags.value|default_if_none:'' }}">
+                            {% if form.tags.errors %}
+                                <div class="error-message">
+                                    {{ form.tags.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="create-article-btn">Создать статью</button>
+                    </form>
+                    <script src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+                    <script src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+                    <script>
+                        function updateCharCount(textarea) {
+                            document.getElementById('charCount').textContent = textarea.value.length;
+                        }
+                    </script>
+                {% else %}
+                    <h4 style="text-align: center;">Извините, но для публикации статей нужно быть старше 18-ти лет.</h4>
+                {% endif %}
+            {% else %}
+                <h4 style="text-align: center;">Для публикации статьи вам необходимо отредактировать профиль. Заполните, пожалуйста, поля "Имя", "Фамилия", "Email" и "Дата рождения". <a class="user-profile-link" href="{% url 'edit_profile' user.username %}">Отредактировать профиль.</a></h4>
+            {% endif %}
+        {% else %}
+            <h4 style="text-align: center;">Для публикации статьи вы должны быть авторизованы. <a class="user-profile-link" href="{% url 'login' %}">Авторизоваться.</a></h4>
+        {% endif %}
+    </div>
+{% endblock %}

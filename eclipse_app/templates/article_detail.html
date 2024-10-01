@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load tz %}
+
+{% block content %}
+<div class="content-distro">
+        <div class="main-distro-content">
+            <div class="back-btn"><a href="{% url 'article_list' %}"><i class="fa-solid fa-angle-left fa-xl"></i> <strong>Назад</strong></a></div>
+            <br>
+            <div class="distro-header" style="flex-wrap: nowrap;">
+                <img class="img-logo" src="{{ article.image.url }}" alt="{{ article.title }}">
+                <div class="div-text">
+                    <p class="text-larger margin-bottom-20 max-600">{{ article.title }}</p>
+                    <p class="text-large text-666"><strong><i class="fa-solid fa-user fa-xl" style="color: #74C0FC;"></i>&nbsp;&nbsp;<span>Автор:</span></strong><span>&nbsp;{{ article.author.username }}#{{ article.author.id }}</span></p>
+                    <p class="text-large text-666"><strong><i class="fa-solid fa-calendar-days fa-xl" style="color: #74C0FC;"></i>&nbsp;&nbsp;<span>Дата написания статьи:</span></strong><span>&nbsp;{{ article.created_at|localtime|date:"H:i, d.m.Y" }}</span></p>
+                    <p class="text-large text-666"><strong><i class="fa-solid fa-tags fa-xl" style="color: #74C0FC;"></i>&nbsp;&nbsp;<span>{{ article.tags.all|join:", " }}</span></strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="second-distro-content">
+            <div id="content" class="tab-content active">
+                <p class="text-header-tab text-large-left">Статья</p>
+                <hr>
+                <br>
+                <p class="text-m">{{ article.content|safe }}</p>
+            </div>
+            </div>
+</div>
+{% endblock %}

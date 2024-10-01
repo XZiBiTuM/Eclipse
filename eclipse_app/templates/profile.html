@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<br><br><br>
+<div class="profile-container">
+    <div class="profile-header">
+    {% if user.is_authenticated %}
+        <h2 style="margin-top: 0">Профиль пользователя <strong>{{ user.username }}#{{ user.id }}</strong></h2>
+        {% if user.profile.profile_image %}
+            <img src="{{ user.profile.profile_image.url }}" alt="{{ user.first_name }}" class="profile-image">
+        {% else %}
+            <img src="{% static 'images/user_not_image.png' %}" alt="Profile Image" class="profile-image">
+        {% endif %}
+    </div>
+    <div class="profile-info">
+        {% if user.email %}
+            <p><strong>Email:</strong> {{ user.email }}</p>
+        {% else %}
+            <p><strong>Email:</strong> Нет</p>
+        {% endif %}
+        {% if user.first_name and user.last_name %}
+            <p><strong>Имя:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+        {% else %}
+            <p><strong>Имя:</strong> Имя Фамилия</p>
+        {% endif %}
+        {% if user.profile.birth_date %}
+            <p><strong>Дата рождения:</strong> {{ user.profile.birth_date }}</p>
+        {% else %}
+            <p><strong>Дата рождения:</strong> 01.01.2001</p>
+        {% endif %}
+    </div>
+    <div class="profile-actions">
+        <a href="{% url 'edit_profile' user.username %}" class="edit-profile-btn">Редактировать профиль</a>
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="auth-button logout-2" type="submit">Выйти из системы</button>
+        </form>
+    </div>
+    {% else %}
+        <h4>Вы еще не авторизированы. <a class="user-profile-link" href="{% url 'login' %}">Авторизоваться</a></h4>
+    {% endif %}
+</div>
+{% endblock %}

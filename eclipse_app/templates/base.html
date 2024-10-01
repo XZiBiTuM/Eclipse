@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://kit.fontawesome.com/6541b5e2da.js" crossorigin="anonymous"></script>
+    <title>
+        {% block title %}Eclipse |
+            {% if title %}
+                {{ title }}
+            {% else %}
+                Авторизация
+            {% endif %}
+        {% endblock %}
+    </title>
+</head>
+<body>
+    <div class="page-container">
+        <div class="content-wrapper">
+            <header>
+                <nav>
+                    <p class="nav-item logo"><a href="{% url 'home' %}">Eclipse</a></p>
+                    <p class="nav-item nav-item-mini"><a href="{% url 'distros_list' %}">Список дистрибутивов Linux</a></p>
+                    <p class="nav-item nav-item-mini"><a href="{% url 'documentation_list' %}">Справочник по Linux</a></p>
+                    <p class="nav-item nav-item-mini"><a href="{% url 'article_list' %}">Статьи про Linux</a></p>
+                    {% if user.is_authenticated is False %}
+                        <p class="nav-item nav-item-mini"><a href="{% url 'login' %}">Авторизация</a></p>
+                        <p class="nav-item nav-item-mini"><a href="{% url 'register' %}">Регистрация</a></p>
+                    {% endif %}
+                    {% if user.is_authenticated %}
+                        <p class="nav-item nav-item-mini"><a href="{% url 'profile' user.username %}">{{ user.username.capitalize }}</a></p>
+                    {% endif %}
+                </nav>
+            </header>
+            <main>
+                <br><br>
+                {% block content %}{% endblock %}
+                {% block extra_scripts %}{% endblock %}
+            </main>
+        </div>
+        <footer>
+            <p style="text-align: center">© 2024 Eclipse</p>
+        </footer>
+    </div>
+</body>
+</html>

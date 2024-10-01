@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<br><br><br>
+<div class="edit-profile-container">
+    <h2 style="margin-top: 0">Редактирование профиля</h2>
+    <form method="POST" enctype="multipart/form-data" class="edit-profile-form">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ user_form.as_p }}
+            {{ profile_form.as_p }}
+        </div>
+        <button type="submit" class="save-btn">Сохранить изменения</button>
+    </form>
+    <a href="{% url 'profile' user.username %}" class="cancel-btn">Отмена</a>
+</div>
+{% endblock %}

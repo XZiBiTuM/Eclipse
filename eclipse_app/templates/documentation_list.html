@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <h1 class="page-title">Справочник по Linux</h1>
+        <div class="filter-bar">
+            <form method="GET" action="{% url 'documentation_list' %}" class="filter-form">
+                <!-- Поиск по названию -->
+                <label>Поиск:
+                    <input type="text" name="search" placeholder="Поиск по названию..." value="{{ search_query }}" class="search-input">
+                </label>
+
+                <!-- Сортировка -->
+                <label>Сортировка:
+                    <select name="sort" class="sort-select">
+                        <option value="" {% if not sort_option %}selected{% endif %}>По умолчанию</option>
+                        <option value="title" {% if sort_option == "title" %}selected{% endif %}>По названию (А-Я)</option>
+                        <option value="-title" {% if sort_option == "-title" %}selected{% endif %}>По названию (Я-А)</option>
+                    </select>
+                </label>
+
+                <div class="separator"></div>
+
+                <button type="submit" class="filter-button">Применить</button>
+            </form>
+        </div>
+
+        <div class="sort-x">
+            {% if sort_option %}
+                <p>Сортировка:
+                    {% if sort_option == 'title' %}
+                         <span class="sort-list">По названию (А-Я)
+                             <a class="h_xmark" href="?{% if search_query %}search={{ search_query }}&{% endif %}">
+                             <i class="fa-solid fa-xmark"></i>
+                             </a>
+                         </span>
+                    {% elif sort_option == '-title' %}
+                         <span class="sort-list">По названию (Я-А)
+                             <a class="h_xmark" href="?{% if search_query %}search={{ search_query }}&{% endif %}">
+                             <i class="fa-solid fa-xmark"></i>
+                             </a>
+                         </span>
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+
+        <div class="found">
+            <br>
+            {% if search_query %}
+                {% if count_diff == 1 %}
+                    <p>По запросу <strong>{{ search_query }}</strong> найден {{ count }} результат</p>
+                {% endif %}
+                {% if count_diff == 2 or count_diff == 3 or count_diff == 4 %}
+                    <p>По запросу <strong>{{ search_query }}</strong> найдено {{ count }} результата</p>
+                {% endif %}
+                {% if count_diff > 4 %}
+                    <p>По запросу <strong>{{ search_query }}</strong> найдено {{ count }} результатов</p>
+                {% endif %}
+                {% if count == 0 %}
+                    <p>По запросу <strong>{{ search_query }}</strong> ничего не найдено</p>
+                {% endif %}
+            {% endif %}
+        </div>
+
+        {% if search_query or sort_option %}
+            <br>
+            <div class="clear-filters">
+                <a href="{% url 'documentation_list' %}" class="clear-filters-button">Сбросить все фильтры</a>
+            </div>
+        {% endif %}
+
+        <div class="distro-grid">
+            {% for doc in documentations %}
+                <div class="distro-item">
+                    <a href="{% url 'documentation_detail' doc.pk %}">
+                        <div class="distro-image">
+                            {% if doc.image %}
+                                <img src="{{ doc.image.url }}" alt="{{ doc.title }}">
+                            {% else %}
+                                <img src="{% static 'images/notfound.png' %}" alt="Нет изображения">
+                            {% endif %}
+                        </div>
+                        <div class="distro-info">
+                            <h2>{{ doc.title }}</h2>
+                            <p style="margin-bottom: 10px;">{{ doc.author }}</p>
+                            <p class="border-top">{{ doc.pdf_only|yesno:"Только PDF,В формате текста" }}</p>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <br><br><br>
+    <style>
+        p {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            justify-content: center;
+            align-items: center;
+        }
+        .helptext {
+            font-style: italic;
+            font-size: small;
+            margin-bottom: 4px;
+        }
+        ul {
+            font-style: italic;
+            font-size: small;
+            color: #666;
+            text-align: left;
+            margin: 0;
+        }
+    </style>
+    <div class="auth-container">
+        <h2 style="text-align: center; margin-top: 0">Регистрация</h2>
+        {% if user.is_authenticated %}
+            <br>
+            <h4>Уважаемый, <a class="user-profile-link" href="{% url 'profile' user.username %}">{{ user.username }}</a>, вы уже авторизованы</h4>
+            <br>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="auth-button logout" type="submit">Выйти из системы</button>
+            </form>
+        {% else %}
+        <form class="form-auth" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="auth-button">Зарегистрироваться</button>
+        </form>
+        {% endif %}
+    </div>
+{% endblock %}

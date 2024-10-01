@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <br><br><br>
+    <style>
+        p {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+    <div class="auth-container">
+        <h2 style="text-align: center; margin-top: 0">Авторизация</h2>
+          {% if user.is_authenticated %}
+            <br>
+            <h4>Уважаемый, <a class="user-profile-link" href="{% url 'profile' user.username %}">{{ user.username }}</a>, вы уже авторизованы</h4>
+            <br>
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button class="auth-button logout" type="submit">Выйти из системы</button>
+            </form>
+          {% else %}
+        <form class="form-auth" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="auth-button">Войти</button>
+        {% endif %}
+        </form>
+    </div>
+{% endblock %}

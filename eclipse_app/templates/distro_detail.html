@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ distribution.name }} {{ distribution.version }}{% endblock %}
+
+{% block content %}
+    <div class="content-distro">
+        <div class="main-distro-content">
+            <div class="back-btn"><a href="{% url 'distros_list' %}"><i class="fa-solid fa-angle-left fa-xl"></i> <strong>Назад</strong></a></div>
+            <div class="distro-header">
+                <img class="img-logo" src="{{ distribution.image.url }}" alt="{{ distribution.name }}">
+                <div class="div-text">
+                    <p class="text-larger margin-bottom-20">{{ distribution.name }}</p>
+                    <p class="text-large text-666"><strong><i class="fa-solid fa-tags fa-xl" style="color: #74C0FC;"></i>&nbsp;&nbsp;<span>{{ distribution.tags.all|join:", " }}</span></strong></p>
+                    <p class="text-large text-666"><strong><i class="fa-solid fa-calendar-days fa-xl" style="color: #74C0FC;"></i>&nbsp;&nbsp;<span>Дата выпуска:</span></strong><span>&nbsp;{{ distribution.release_date }}</span></p>
+                    <p class="text-large text-666"><strong><i class="fa-solid fa-globe fa-xl" style="color: #74C0FC;"></i>&nbsp;&nbsp;<span>Официальный сайт:</span></strong><span>&nbsp;<a href="{{ distribution.official_website }}" class="site-link" target="_blank">{{ distribution.official_website }}</a></span></p>
+                    <p class="text-large text-666"><strong><i class="fa-solid fa-trowel-bricks fa-xl" style="color: #74C0FC;"></i>&nbsp;&nbsp;<span>Основа для данной ОС:</span></strong><span>&nbsp;{{ distribution.based_on }}</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="second-distro-content">
+            <div class="tabs">
+                <button class="tab-button active tab-text" onclick="openTab(event, 'description')">Описание</button>
+                <button class="tab-button tab-text" onclick="openTab(event, 'history')">История создания</button>
+                <button class="tab-button tab-text" onclick="openTab(event, 'features')">Особенности</button>
+                <button class="tab-button tab-text" onclick="openTab(event, 'installation')">Шаги установки</button>
+                <button class="tab-button tab-text" onclick="openTab(event, 'versions')">Актуальные версии</button>
+            </div>
+        <div id="description" class="tab-content">
+            <p class="text-header-tab text-large-left">Описание</p>
+            <hr>
+            <br>
+            <p class="text-m">{{ distribution.description|linebreaksbr }}</p>
+        </div>
+
+        <div id="history" class="tab-content">
+            <p class="text-header-tab text-large-left">История создания</p>
+            <hr>
+            <br>
+            <p class="text-m">{{ distribution.history|linebreaksbr }}</p>
+        </div>
+
+        <div id="features" class="tab-content">
+            <p class="text-header-tab text-large-left">Особенности</p>
+            <hr>
+            <br>
+            <p class="text-m">{{ distribution.features|linebreaksbr }}</p>
+        </div>
+
+        <div id="installation" class="tab-content">
+            <h2 class="h2-text-steps">Шаги установки</h2>
+            <hr class="hr-margin-15">
+            <ul class="flex-ul">
+                {% for step in distribution.installation_steps.all %}
+                    <li id="{{ distribution.name.lower }}-step-{{ step.step_number }}" class="step-item flex-li" data-step="{{ forloop.counter0 }}">
+                        <strong><span class="text-m text-666 bold">Шаг {{ step.step_number }}:</span></strong> <span class="text-m text-666">{{ step.step_text }}</span><br>
+                        {% if step.step_image %}
+                            <br>
+                            <img src="{{ step.step_image.url }}" alt="Шаг {{ step.step_number }}">
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div id="versions" class="tab-content">
+            <h2 class="h2-text-steps">Актуальные версии</h2>
+            <hr class="hr-margin-15">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Версия</th>
+                        <th>Текущая версия</th>
+                        <th>Кодовое название</th>
+                        <th>Кол-во поддерживаемых архитектур</th>
+                        <th>Кол-во пакетов</th>
+                        <th>Дата выхода</th>
+                        <th>Дата окончания поддержки</th>
+                        <th>Дата окончания длительной поддержки</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for version in distribution.current_versions.all %}
+                    <tr>
+                        <td>{{ version.version }}</td>
+                        <td>{{ version.current_version }}</td>
+                        <td>{% if version.code_name %}{{ version.code_name }}{% else %}-{% endif %}</td>
+                        <td>{% if version.architectures != '0' %}{{ version.architectures }}{% else %}-{% endif %}</td>
+                        <td>{% if version.packages != '0' %}{{ version.packages }}{% else %}-{% endif %}</td>
+                        <td>{{ version.release_date }}</td>
+                        <td>{% if version.support_end_date %}{{ version.support_end_date }}{% else %}-{% endif %}</td>
+                        <td>{% if version.full_support_end_date %}{{ version.full_support_end_date }}{% else %}-{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+        <!-- Popup контейнер -->
+        <div class="popup hidden">
+            <div class="popup-content">
+                <!-- JS Инъекция -->
+            </div>
+            <div class="popup-buttons">
+                <button class="popup-prev">Предыдущий шаг</button>
+                <button class="popup-next">Следующий шаг</button>
+                <button class="popup-close">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="checkbox" name="list" disabled><label>Яблоки</label></br>
+    <input type="checkbox" name="list" checked><label>Молоко</label>
+    <input type="checkbox" name="list"><label>Яйца</label>
+
+{% endblock %}
+
+{% block extra_scripts %}
+        <script>
+        function openTab(event, tabId) {
+            let i, tabContent, tabButtons;
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+            }
+            tabButtons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].className = tabButtons[i].className.replace(" active", "");
+            }
+            let selectedTab = document.getElementById(tabId);
+            if (selectedTab) {
+                selectedTab.style.display = "block";
+                event.currentTarget.className += " active";
+
+                sessionStorage.setItem('selectedTab', tabId);
+            }
+        }
+
+        function loadTab() {
+            let selectedTab = sessionStorage.getItem('selectedTab') || 'description';
+            let tabButtons = document.getElementsByClassName('tab-button');
+            let tabContent = document.getElementsByClassName('tab-content');
+
+            for (let i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = 'none';
+            }
+
+            for (let j = 0; j < tabButtons.length; j++) {
+                tabButtons[j].classList.remove('active');
+            }
+
+            let tabToShow = document.getElementById(selectedTab);
+            if (tabToShow) {
+                tabToShow.style.display = 'block';
+                let activeButton = document.querySelector("[onclick=\"openTab(event, '" + selectedTab + "')\"]");
+                if (activeButton) {
+                    activeButton.classList.add('active');
+                }
+            }
+        }
+
+        window.onload = loadTab;
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const steps = document.querySelectorAll('li[id^="{{ distribution.name.lower }}-step-"]');
+            const popup = document.querySelector('.popup');
+            const popupContent = document.querySelector('.popup-content');
+            const closeButton = document.querySelector('.popup-close');
+            const nextButton = document.querySelector('.popup-next');
+            const prevButton = document.querySelector('.popup-prev');
+            let currentStepIndex = 0;
+
+            function showPopup(stepIndex) {
+                const step = steps[stepIndex];
+                popupContent.innerHTML = step.innerHTML;
+                popup.classList.remove('hidden');
+                currentStepIndex = stepIndex;
+                updateNavButtons();
+            }
+
+            function closePopup() {
+                popup.classList.add('hidden');
+            }
+
+            function updateNavButtons() {
+                prevButton.disabled = (currentStepIndex === 0);
+                nextButton.disabled = (currentStepIndex === steps.length - 1);
+            }
+
+            steps.forEach((step, index) => {
+                step.addEventListener('click', () => {
+                    showPopup(index);
+                });
+            });
+
+            closeButton.addEventListener('click', closePopup);
+
+            nextButton.addEventListener('click', () => {
+                if (currentStepIndex < steps.length - 1) {
+                    showPopup(currentStepIndex + 1);
+                }
+            });
+
+            prevButton.addEventListener('click', () => {
+                if (currentStepIndex > 0) {
+                    showPopup(currentStepIndex - 1);
+                }
+            });
+
+            popup.addEventListener('click', (e) => {
+                if (e.target === popup) {
+                    closePopup();
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="content-distro">
+        <div class="main-distro-content">
+            <div class="back-btn"><a href="{% url 'documentation_list' %}"><i class="fa-solid fa-angle-left fa-xl"></i> <strong>Назад</strong></a></div>
+            <br>
+            <div class="distro-header" style="flex-wrap: nowrap;">
+                <img class="img-logo" src="{{ documentation.image.url }}" alt="{{ documentation.title }}">
+                <div class="div-text">
+                    <p class="text-larger margin-bottom-20 max-600">{{ documentation.title }}</p>
+                    {% if ',' in documentation.author %}
+                        <p class="text-large text-666"><strong><i class="fa-solid fa-users fa-xl" style="color: #74C0FC;"></i>&nbsp;&nbsp;<span>Авторы:</span></strong><span>&nbsp;{{ documentation.author }}</span></p>
+                    {% else %}
+                        <p class="text-large text-666"><strong><i class="fa-solid fa-user fa-xl" style="color: #74C0FC;"></i>&nbsp;&nbsp;<span>Автор:</span></strong><span>&nbsp;{{ documentation.author }}</span></p>
+                    {% endif %}
+                    <p class="text-large text-666"><strong><i class="fa-solid fa-calendar-days fa-xl" style="color: #74C0FC;"></i>&nbsp;&nbsp;<span>Год выпуска:</span></strong><span>&nbsp;{{ documentation.year }}</span></p>
+                    {% if documentation.pdf %}
+                        <p class="text-large text-666"><strong><i class="fa-solid fa-file-pdf fa-xl" style="color: #74C0FC;"></i>&nbsp;&nbsp;<span>PDF:</span></strong><span>&nbsp;<a href="{{ documentation.pdf.url }}" class="site-link" target="_blank">{{ documentation.title }}</a></span></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="second-distro-content">
+            <div id="content" class="tab-content active">
+                <p class="text-header-tab text-large-left">Документация</p>
+                <hr>
+                <br>
+                {% if not documentation.pdf_only %}
+                    <p class="text-m">{{ documentation.content|safe }}</p>
+                {% else %}
+                    <p class="text-m">Данная документация доступна только в PDF.</p>
+                {% endif %}
+                {% if documentation.pdf %}
+                    <div class="documentation-pdf">
+                        <a href="{{ documentation.pdf.url }}" class="pdf-download-button" target="_blank">Открыть в PDF</a>
+                    </div>
+                {% endif %}
+            </div>
+            </div>
+</div>
+{% endblock %}
